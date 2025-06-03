@@ -41,7 +41,7 @@ export default function LeaderboardPage() {
     fetchLeaderboard();
   }, []);
 
-  if(entries.length===0) return <Loading/>
+  if (loading) return <Loading />;
 
   return (
     <main className="w-full bg-gradient-to-br from-[#a1c4fd] via-[#c2e9fb] to-[#fbc2eb] min-h-screen py-10">
@@ -51,7 +51,7 @@ export default function LeaderboardPage() {
             <h1 className="text-3xl font-bold">🏆 Leaderboard</h1>
             <button
               onClick={() => {
-                router.push("/flick")
+                router.push("/flick");
               }}
               className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
             >
@@ -74,15 +74,46 @@ export default function LeaderboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {entries
-                  .sort((a, b) => Number(b.score) - Number(a.score))
-                  .map((entry, idx) => {
+                {(() => {
+                  // 1) Sort existing entries by score descending
+                  const sorted = [...entries].sort(
+                    (a, b) => Number(b.score) - Number(a.score)
+                  );
+
+                  // 2) Check if current user is in the sorted list
+                  const currentUserId = user?.id;
+                  const isInList = currentUserId
+                    ? sorted.some((e) => e.userId === currentUserId)
+                    : false;
+
+                  // 3) If not, append a synthetic entry at the end
+                  if (currentUserId && !isInList) {
+                    sorted.push({
+                      userId: currentUserId,
+                      score: "0",
+                      user: {
+                        id: currentUserId,
+                        custom_metadata: {
+                          name: user.customMetadata?.name as string || "",
+                        },
+                      },
+                    });
+                  }
+
+                  // 4) Render every entry (including the synthetic one, if added)
+                  return sorted.map((entry, idx) => {
                     const username =
                       entry.user?.custom_metadata?.name ||
                       entry.user?.email?.address ||
                       entry.user?.wallet?.address ||
                       entry.userId;
-                    const isCurrentUser = entry.userId === user?.id;
+
+                    const isCurrentUser = entry.userId === currentUserId;
+
+                    // If this is the synthetic “not-in-list” entry, rank = “–”
+                    const rankDisplay =
+                      isCurrentUser && !isInList ? "–" : idx + 1;
+
                     return (
                       <tr
                         key={entry.userId}
@@ -94,7 +125,7 @@ export default function LeaderboardPage() {
                             : "bg-gray-50"
                         }
                       >
-                        <td className="p-3 font-medium">{idx + 1}</td>
+                        <td className="p-3 font-medium">{rankDisplay}</td>
                         <td className="p-3 truncate">
                           {username}
                           <span className="ml-2 text-gray-400 text-xs">
@@ -112,7 +143,8 @@ export default function LeaderboardPage() {
                         <td className="p-3">{entry.score}</td>
                       </tr>
                     );
-                  })}
+                  });
+                })()}
               </tbody>
             </table>
           )}
