@@ -78,6 +78,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ user: updatedUser }, { status: 200 });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("[update-username] error:", err);
     return NextResponse.json(

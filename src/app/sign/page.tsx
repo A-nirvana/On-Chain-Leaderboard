@@ -22,7 +22,7 @@ export default function AuthPage() {
   const [name, setName] = useState("");
 
   const { sendCode, loginWithCode } = useLoginWithEmail();
-  const { state, loading, initOAuth } = useLoginWithOAuth();
+  const {initOAuth } = useLoginWithOAuth();
   const { login } = useLogin();
   const { authenticated, ready, user } = usePrivy();
   const router = useRouter();
@@ -57,6 +57,7 @@ export default function AuthPage() {
       setCodeSent(true);
     } catch (err) {
       toast.error("Error sending code");
+      console.error("Error sending code:", err);
     } finally {
       setIsLoading(false);
     }
@@ -72,6 +73,7 @@ export default function AuthPage() {
       await loginWithCode({ code });
     } catch (err) {
       toast.error("Invalid code");
+      console.error("Error verifying code:", err);
     } finally {
       setIsLoading(false);
     }
@@ -294,9 +296,9 @@ export default function AuthPage() {
 
                   setSaved(true);
                   toast.success("Your display name has been saved!");
-                } catch (err: any) {
+                } catch (err: unknown) {
                   console.error("Error updating display name:", err);
-                  toast.error(err.message || "Unable to save name");
+                  toast.error("Unable to save name");
                 }
               }}
               className="mt-4 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"

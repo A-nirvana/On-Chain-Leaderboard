@@ -38,7 +38,7 @@ export default function UserDashboard() {
           toast.error(data.error || "Failed to fetch score");
         }
         setScore(data.score);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching score:", err);
         toast.error("Failed to fetch your score.");
       } finally {
@@ -106,7 +106,7 @@ export default function UserDashboard() {
                     try {
                       const w = await createWallet();
                       toast.success(`Ethereum wallet created: ${w.address}`);
-                    } catch (err: any) {
+                    } catch (err: unknown) {
                       console.error("createWallet error:", err);
                       toast.error("Failed to create wallet");
                     } finally {

@@ -58,7 +58,7 @@ const CoinToss: React.FC = () => {
           toast.error(data.error || "Failed to fetch score");
         }
         setHighestScore(data.score);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching score:", err);
         toast.error("Failed to fetch your score.");
       } finally {
@@ -102,9 +102,9 @@ const CoinToss: React.FC = () => {
       }
       toast.success("Score updated successfully!");
       setScore(0);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error updating score:", err);
-      toast.error(err.message || "Could not update score.");
+      toast.error("Could not update score.");
     } finally {
       setUpdating(false);
     }

@@ -30,7 +30,7 @@ export default function LeaderboardPage() {
         if (!res.ok) throw new Error("Failed to load leaderboard");
         const data = await res.json();
         setEntries(data.leaderboard);
-      } catch (err: any) {
+      } catch (err: unknown) {
         toast.error("Error fetching leaderboard");
         console.error("Leaderboard fetch error:", err);
       } finally {

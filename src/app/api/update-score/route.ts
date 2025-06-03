@@ -52,6 +52,7 @@ export async function POST(req: NextRequest) {
       },
       { status: 200 }
     );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("⛔️ [relay-update-score] error:", err);
 

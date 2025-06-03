@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
     const score: bigint = await contract.getScore(userId);
     return NextResponse.json({ userId, score: score.toString() });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to fetch score:", error);
     return NextResponse.json({ error: "Failed to fetch score" }, { status: 500 });
   }

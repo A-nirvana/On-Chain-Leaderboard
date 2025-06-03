@@ -1,6 +1,6 @@
 export const runtime = "nodejs"; // ✅ Force Node.js runtime
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { ethers } from "ethers";
 import { abi } from "@/constants/abi";
 
@@ -12,13 +12,12 @@ const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET!;
 if (!RPC_URL || !CONTRACT_ADDRESS || !PRIVY_APP_ID || !PRIVY_APP_SECRET) {
   throw new Error("Missing required environment variables.");
 }
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchAllPrivyUsers(): Promise<any[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const allUsers: any[] = [];
   let cursor: string | null = null;
 
-  // Privy’s GET /users endpoint paginates with `cursor` query param.
-  // Documentation: https://docs.privy.io/api-reference/users/get
   do {
     const url = new URL("https://auth.privy.io/api/v1/users");
     url.searchParams.set("limit", "100");
@@ -52,22 +51,17 @@ async function fetchAllPrivyUsers(): Promise<any[]> {
   return allUsers;
 }
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   try {
-    // 1) Connect to Sepolia RPC
     const provider = new ethers.JsonRpcProvider(RPC_URL);
     const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
 
-    // 2) Fetch [userIds, scores[]] from contract
     const [userIds, scoresBig]: [string[], bigint[]] = await contract.getLeaderboard();
     const scores = scoresBig.map((s) => s.toString());
 
-    // 3) Fetch all Privy users via REST
     const users = await fetchAllPrivyUsers();
-    // Build a map of DID → user object
     const userMap = new Map(users.map((u) => [u.id, u]));
 
-    // 4) Merge on-chain data with Privy user data
     const leaderboard = userIds.map((userId, idx) => ({
       userId,
       score: scores[idx],
@@ -75,10 +69,10 @@ export async function GET(_req: NextRequest) {
     }));
 
     return NextResponse.json({ leaderboard }, { status: 200 });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("⛔️ [get-leaderboard] error:", err);
     return NextResponse.json(
-      { error: err.message || "Unknown server error." },
+      { error:"Unknown server error." },
       { status: 500 }
     );
   }
