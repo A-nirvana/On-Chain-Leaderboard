@@ -76,7 +76,7 @@ export default function UserDashboard() {
             Welcome, {user?.customMetadata?.name || "User"}!
           </div>
           <div className="text-sm text-gray-500">
-            {user?.email?.address || "No email available"}
+            {user?.email?.address || user?.google?.email || user?.github?.email || "No email available"}
           </div>
           <div className="space-y-2 mt-10">
             <div className="text-gray-700 font-medium">
