@@ -213,13 +213,6 @@ export default function AuthPage() {
             </>
           ) : (
             <>
-              <input
-                type="text"
-                placeholder="Your name"
-                className="w-full border border-gray-300 p-2 rounded"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
               <div className="text-center text-sm text-gray-600">
                 Enter the 6-digit code sent to your email
               </div>
